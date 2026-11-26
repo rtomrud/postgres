@@ -1,0 +1,57 @@
+services:
+  postgres:
+    image: postgres
+    # ports:
+    #   - 5432:5432
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_password
+    secrets:
+      - postgres_password
+    volumes:
+      - data:/var/lib/postgresql
+      - ./initdb:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_SERVER: postgres
+      PGADMIN_DEFAULT_EMAIL: postgres@example.com
+      PGADMIN_DEFAULT_PASSWORD_FILE: /run/secrets/pgadmin_password
+    ports:
+      - 3000:80
+    volumes:
+      - ./servers.json:/pgadmin4/servers.json
+    secrets:
+      - postgres_password
+      - pgadmin_password
+    # libpq needs a 0600 .pgpass owned by the pgadmin user (uid 5050), so build
+    # one from the secret in the user's storage directory before starting.
+    entrypoint:
+      - sh
+      - -ec
+      - |
+        dir=/var/lib/pgadmin/storage/postgres_example.com
+        mkdir -p "$$dir"
+        printf 'postgres:5432:*:postgres:%s\n' "$$(cat /run/secrets/postgres_password)" > "$$dir/.pgpass"
+        chmod 600 "$$dir/.pgpass"
+        exec /entrypoint.sh
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  data:
+
+secrets:
+  postgres_password:
+    file: ./postgres_password
+  pgadmin_password:
+    file: ./pgadmin_password
