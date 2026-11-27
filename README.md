@@ -58,14 +58,16 @@ docker compose exec postgres psql -U postgres
 
 ## Schema
 
-Postgres runs the `.sql` and `.sh` files in `initdb/` in name order, but only when it creates a new database. Put your schema in `initdb/schema.sql`. To apply changes to it, delete the data volume and start again:
+Postgres runs the `.sql` and `.sh` files in `initdb/` in name order, but only when it creates a new database. Put your schema in `initdb/schema.sql`.
+
+To apply changes to it, delete the data volume and start again:
 
 ```sh
 docker compose down -v
 docker compose up -d
 ```
 
-This deletes all data.
+This deletes all data and loads your .sql files in the `initdb/` directory.
 
 ## Backup
 
