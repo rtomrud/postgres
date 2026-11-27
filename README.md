@@ -18,6 +18,13 @@ openssl rand -hex 16 > postgres_password
 openssl rand -hex 16 > pgadmin_password
 ```
 
+pgAdmin runs as a user in group 0, so give that group read access to the files while keeping them hidden from other users on the host:
+
+```sh
+sudo chgrp 0 postgres_password pgadmin_password
+sudo chmod 640 postgres_password pgadmin_password
+```
+
 Start the services:
 
 ```sh
