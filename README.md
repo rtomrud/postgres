@@ -11,6 +11,13 @@ echo "your-postgres-password" > postgres_password
 echo "your-pgadmin-password" > pgadmin_password
 ```
 
+Or generate random passwords:
+
+```sh
+openssl rand -hex 16 > postgres_password
+openssl rand -hex 16 > pgadmin_password
+```
+
 Start the services:
 
 ```sh
@@ -45,3 +52,4 @@ docker compose up -d
 ```
 
 This deletes all data.
+
