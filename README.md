@@ -4,6 +4,13 @@ A local PostgreSQL server with pgAdmin, run by Docker Compose.
 
 ## Setup
 
+Clone the repository with git and go into the directory:
+
+```sh
+git clone https://github.com/rtomrud/postgres.git
+cd postgres
+```
+
 Write each password to its own file in the project root. Git ignores both files.
 
 ```sh
