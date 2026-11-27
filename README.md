@@ -53,3 +53,19 @@ docker compose up -d
 
 This deletes all data.
 
+## Backup
+
+Export the database to `initdb/`:
+
+```sh
+docker compose exec -T postgres pg_dump -U postgres --clean --if-exists > "initdb/zz_backup_$(date +%Y%m%d_%H%M%S).sql"
+```
+
+The `zz_` prefix makes Postgres run backups after `schema.sql`. The `--clean --if-exists` flags make each backup drop the tables that earlier files create before restoring its own, so the files don't conflict. Git ignores the backups.
+
+To restore, keep only the backup you want in `initdb/`, then delete the data volume and start again:
+
+```sh
+docker compose down -v
+docker compose up -d
+```
